@@ -98,7 +98,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             except:
                 pass
             command = counter
-            mention = "ᴜᴘᴠᴏᴛᴇs"
+            mention = "Upvotes"
         else:
             if (
                 CallbackQuery.from_user.id
