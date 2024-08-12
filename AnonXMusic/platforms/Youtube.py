@@ -3,12 +3,14 @@ import os
 import re
 from typing import Union
 
+import aiohttp
 from yt_dlp import YoutubeDL
 import requests
 from pyrogram.enums import MessageEntityType
 from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 
+import config
 from AnonXMusic.utils.database import is_on_off
 from AnonXMusic.utils.formatters import time_to_seconds
 
@@ -322,7 +324,7 @@ class YouTubeAPI:
             fpath = f"downloads/{title}.mp3"
             return fpath
         elif video:
-            if await is_on_off(1):
+            if await is_on_off(config.YTDOWNLOADER):
                 direct = True
                 downloaded_file = await loop.run_in_executor(None, video_dl)
             else:
@@ -343,9 +345,7 @@ class YouTubeAPI:
                     return
         else:
             direct = True
-            downloaded_file = await loop.run_in_executor(
-                None, audio_dl
-            )
+            downloaded_file = await loop.run_in_executor(None, audio_dl)
 
 
 class KSKOP:
@@ -450,28 +450,31 @@ class KSKOP:
 
                     return file_path
 
-        response =  requests.get(f"https://pipedapi-libre.kavin.rocks/streams/{vidid}").json()
+        response = requests.get(
+            f"https://pipedapi-libre.kavin.rocks/streams/{vidid}"
+        ).json()
         loop = asyncio.get_running_loop()
 
         if songvideo:
 
-            url = response.get("videoStreams", [])[-1]['url']
-            fpath = await loop.run_in_executor(None, lambda: asyncio.run(song_video_dl(url)))
+            url = response.get("videoStreams", [])[-1]["url"]
+            fpath = await loop.run_in_executor(
+                None, lambda: asyncio.run(song_video_dl(url))
+            )
             return fpath
 
         elif songaudio:
-            return response.get("audioStreams", [])[4]["url"]  
-
+            return response.get("audioStreams", [])[4]["url"]
 
         elif video:
-            url = response.get("videoStreams", [])[-1]['url']
+            url = response.get("videoStreams", [])[-1]["url"]
             direct = True
-            downloaded_file = await loop.run_in_executor(None, lambda: asyncio.run(video_dl(url)))
-
+            downloaded_file = await loop.run_in_executor(
+                None, lambda: asyncio.run(video_dl(url))
+            )
 
         else:
             direct = True
-            downloaded_file = response.get("audioStreams", [])[4]['url']
-
+            downloaded_file = response.get("audioStreams", [])[4]["url"]
 
         return downloaded_file, direct
