@@ -5,18 +5,12 @@ from typing import Union
 from pyrogram.types import InlineKeyboardMarkup
 
 import config
-from AnonXMusic import Carbon, YouTube, app, KSK
+from AnonXMusic import Carbon, YouTube, app
 from AnonXMusic.core.call import Anony
 from AnonXMusic.misc import db
-from AnonXMusic.utils.database import (
-    add_active_chat,
-    add_active_video_chat,
-    is_active_chat,
-    is_video_allowed,
-    music_on,
-)
+from AnonXMusic.utils.database import add_active_video_chat, is_active_chat
 from AnonXMusic.utils.exceptions import AssistantErr
-from AnonXMusic.utils.inline import aq_markup, close_markup, stream_markup, telegram_markup
+from AnonXMusic.utils.inline import import aq_markup, close_markup, stream_markup
 from AnonXMusic.utils.pastebin import AnonyBin
 from AnonXMusic.utils.stream.queue import put_queue, put_queue_index
 from AnonXMusic.utils.thumbnails import get_thumb
@@ -38,7 +32,7 @@ async def stream(
     if not result:
         return
     if forceplay:
-        await Anony.force_stop_stream(chat_id)
+        await Sakku.force_stop_stream(chat_id)
     if streamtype == "playlist":
         msg = f"{_['play_19']}\n\n"
         count = 0
@@ -80,12 +74,12 @@ async def stream(
                     db[chat_id] = []
                 status = True if video else None
                 try:
-                    file_path, direct = await KSK.download(
+                    file_path, direct = await YouTube.download(
                         vidid, mystic, video=status, videoid=True
                     )
                 except:
                     raise AssistantErr(_["play_14"])
-                await Anony.join_call(
+                await Sakku.join_call(
                     chat_id,
                     original_chat_id,
                     file_path,
@@ -122,7 +116,7 @@ async def stream(
         if count == 0:
             return
         else:
-            link = await AnonyBin(msg)
+            link = await SakkuBin(msg)
             lines = msg.count("\n")
             if lines >= 17:
                 car = os.linesep.join(msg.split(os.linesep)[:17])
@@ -144,7 +138,7 @@ async def stream(
         thumbnail = result["thumb"]
         status = True if video else None
         try:
-            file_path, direct = await KSK.download(
+            file_path, direct = await YouTube.download(
                 vidid, mystic, videoid=True, video=status
             )
         except:
@@ -171,7 +165,7 @@ async def stream(
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Anony.join_call(
+            await Sakku.join_call(
                 chat_id,
                 original_chat_id,
                 file_path,
@@ -231,7 +225,7 @@ async def stream(
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Anony.join_call(chat_id, original_chat_id, file_path, video=None)
+            await Sakku.join_call(chat_id, original_chat_id, file_path, video=None)
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -283,7 +277,7 @@ async def stream(
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Anony.join_call(chat_id, original_chat_id, file_path, video=status)
+            await Sakku.join_call(chat_id, original_chat_id, file_path, video=status)
             await put_queue(
                 chat_id,
                 original_chat_id,
@@ -339,7 +333,7 @@ async def stream(
             n, file_path = await YouTube.video(link)
             if n == 0:
                 raise AssistantErr(_["str_3"])
-            await Anony.join_call(
+            await Sakku.join_call(
                 chat_id,
                 original_chat_id,
                 file_path,
@@ -397,7 +391,7 @@ async def stream(
         else:
             if not forceplay:
                 db[chat_id] = []
-            await Anony.join_call(
+            await Sakku.join_call(
                 chat_id,
                 original_chat_id,
                 link,
